@@ -1,3 +1,4 @@
+// @ts-ignore jsonwebtoken is supplied by the server package in generated projects.
 import jwt from "jsonwebtoken";
 
 import {
@@ -5,46 +6,52 @@ import {
     UserInactiveError
 } from "./errors";
 
-const DEFAULT_VERIFY_OPTIONS: jwt.VerifyOptions = {
-    algorithms: ["HS256"],
-};
+export namespace AuthenticationCoreCurrentUser {
+    const DEFAULT_VERIFY_OPTIONS: jwt.VerifyOptions = {
+        algorithms: ["HS256"]
+    };
 
-async function asyncVerify(token: string, secretOrPublicKey: jwt.Secret | jwt.PublicKey, options: jwt.VerifyOptions = {}): Promise<string | jwt.JwtPayload> {
-    return new Promise((resolve, reject) => {
-        jwt.verify(token, secretOrPublicKey, options, (err, decoded) => {
-            if (err) reject(err);
-            else resolve(decoded);
+    function asyncVerify(
+        token: string,
+        secretOrPublicKey: jwt.Secret | jwt.PublicKey,
+        options: jwt.VerifyOptions = {}
+    ): Promise<string | jwt.JwtPayload> {
+        return new Promise((resolve, reject) => {
+            jwt.verify(token, secretOrPublicKey, options, (err: jwt.VerifyErrors | null, decoded: object | string | undefined) => {
+                if (err) reject(err);
+                else resolve(decoded as string | jwt.JwtPayload);
+            });
         });
-    });
-}
-
-export async function getCurrentUser(
-    token: string,
-    jwtKey: jwt.Secret,
-    isActiveCallback: (uuid: string) => Promise<boolean>,
-    verifyOptions: jwt.VerifyOptions = {}) {
-
-    const options = { ...DEFAULT_VERIFY_OPTIONS, ...verifyOptions };
-
-    let payload: string | jwt.JwtPayload;
-
-    try {
-        payload = await asyncVerify(token, jwtKey, options);
-    } catch (e) {
-        throw new InvalidTokenError("Token verification failed");
     }
 
-    if (typeof payload === "string") {
-        throw new InvalidTokenError("Invalid token payload type");
-    }
+    export async function getCurrentUser(
+        token: string,
+        jwtKey: jwt.Secret,
+        isActiveCallback: (uuid: string) => Promise<boolean>,
+        verifyOptions: jwt.VerifyOptions = {}
+    ): Promise<string> {
+        const options = { ...DEFAULT_VERIFY_OPTIONS, ...verifyOptions };
 
-    if (typeof payload.sub !== "string") {
-        throw new InvalidTokenError("Token payload does not contain valid 'sub'");
-    }
+        let payload: string | jwt.JwtPayload;
 
-    if (!(await isActiveCallback(payload.sub))) {
-        throw new UserInactiveError();
-    }
+        try {
+            payload = await asyncVerify(token, jwtKey, options);
+        } catch (e) {
+            throw new InvalidTokenError("Token verification failed");
+        }
 
-    return payload.sub;
+        if (typeof payload === "string") {
+            throw new InvalidTokenError("Invalid token payload type");
+        }
+
+        if (typeof payload.sub !== "string") {
+            throw new InvalidTokenError("Token payload does not contain valid 'sub'");
+        }
+
+        if (!(await isActiveCallback(payload.sub))) {
+            throw new UserInactiveError();
+        }
+
+        return payload.sub;
+    }
 }

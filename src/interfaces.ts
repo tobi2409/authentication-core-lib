@@ -16,3 +16,13 @@ export interface VerificationMail {
     subject: string;
     content(uuid: string): string;
 }
+
+export interface MailTransportConfig {
+    host: string;
+    port: number;
+    secure: boolean;
+    auth: {
+        user: string;
+        pass: string;
+    };
+}

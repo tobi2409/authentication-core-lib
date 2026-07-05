@@ -1,22 +1,43 @@
 {
   "name": "authentication-core-lib",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "version": "0.1.0",
+  "description": "Framework-agnostic authentication core for TypeScript.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "authentication",
+    "jwt",
+    "argon2",
+    "typescript",
+    "library"
+  ],
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "exports": {
+    "./login": "./src/login.ts",
+    "./register": "./src/register.ts",
+    "./current-user": "./src/current-user.ts",
+    "./errors": "./src/errors.ts",
+    "./interfaces": "./src/interfaces.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "lint": "tsc --noEmit"
+  },
   "dependencies": {
-    "argon2": "latest",
-    "jsonwebtoken": "latest",
-    "nodemailer": "latest"
+    "argon2": "0.44.0",
+    "jsonwebtoken": "9.0.3",
+    "nodemailer": "9.0.3"
   },
   "devDependencies": {
-    "typescript": "latest"
+    "@types/node": "26.1.0",
+    "typescript": "6.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
