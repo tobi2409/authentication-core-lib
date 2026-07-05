@@ -1,6 +1,6 @@
 {
   "name": "@tobi2409/authentication-core-lib",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Framework-agnostic authentication core for TypeScript.",
   "type": "module",
   "license": "MIT",
