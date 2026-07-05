@@ -16,6 +16,7 @@
     "README.md"
   ],
   "exports": {
+    "." : "./src/index.ts",
     "./login": "./src/login.ts",
     "./register": "./src/register.ts",
     "./current-user": "./src/current-user.ts",
